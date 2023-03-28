@@ -7,13 +7,19 @@
 /* Initial goals */
 !start_sum(4,2). // uncomment for Task 1.2.1
 !start_sum(4,-2). // uncomment for Task 1.2.1
-//!start_division(4,2). // uncomment for Task 1.2.2
-//!start_division(4,2.5). // uncomment for Task 1.2.2
-//!start_division(4,0). // uncomment for Task 1.2.2
-//!start_even_or_odd(4). // uncomment for Task 1.2.3
-//!start_even_or_odd(5). // uncomment for Task 1.2.3
-//!start_list_generation(0,4). // uncomment for Task 1.2.4
-//!print_list([0,1,2,3,4]). // uncomment for an example of handling a list with recursion
+!start_division(4,2). // uncomment for Task 1.2.2
+!start_division(4,2.5). // uncomment for Task 1.2.2
+!start_division(4,0). // uncomment for Task 1.2.2
+!start_even_or_odd(4). // uncomment for Task 1.2.3
+!start_even_or_odd(5). // uncomment for Task 1.2.3
+!start_list_generation(0,4). // uncomment for Task 1.2.4
+!print_list([0,1,2,3,4]). // uncomment for an example of handling a list with recursion
+
+
+// Inference rule for infering the belief that a number is odd
+even(X):- X mod 2 == 0.
+
+odd(X):- not (X mod 2 == 0).
 
 /* 
  * Plan for reacting to the addition of the goal !start_sum
@@ -29,7 +35,7 @@
 /* Task 1.2.1 Start of your solution */
 @compute_sum_task_1_2_1_plan
 +!compute_sum(X,Y,Sum) : true <-
-    .print("Implement Task 1.2.1").
+    Sum = X + Y.
 /* Task 1.2.1 End of your solution */
 
 @start_division_task_1_2_2_plan
@@ -38,6 +44,14 @@
     .print(Dividend, "/", Divisor, "=", Quotient).
 
 /* Task 1.2.2 Start of your solution */
+@compute_division_0_task_1_2_2_plan
++!compute_division(X,Y,Quotient) : Y == 0 <-
+    -compute_division(X, Y);
+     .print("Division trough 0 not possible!").
+
+@compute_division_task_1_2_2_plan
++!compute_division(X,Y,Quotient) : Y > 0 | Y < 0 <-
+     Quotient = X / Y.
 /* Task 1.2.2 End of your solution */
 
 /* 
@@ -93,6 +107,15 @@
 
 /* Task 1.2.4 Start of your solution */
 // You are allowed to use a triggering event other than the one provided 
+@compute_list_plan
++!compute_list(Start, End, ExistingList, List) : not Start > End <-
+    .concat(ExistingList, [Start], NewList);
+    !compute_list((Start + 1), End, NewList, List).
+
+@compute_list_plan_finished
++!compute_list(Start, End, ExistingList, List) : Start > End <-
+    .concat(ExistingList, [Start], NewList);
+    List = ExistingList.
 /* Task 1.2.4 End of your solution */
 
 /* 
